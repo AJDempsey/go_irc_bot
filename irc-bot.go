@@ -17,19 +17,19 @@ type Config struct {
 }
 
 /* Idea for this code taken from https://blog.gopheracademy.com/advent-2014/reading-config-files-the-go-way/ */
-func read_config_file (file_path string) *Config {
+func read_config_file (file_path string) (*Config, bool) {
     var instance_config Config
 
     _, err := os.Stat(file_path)
     if err != nil {
-	log.Fatal("Config file doesn't exist")
+	return &instance_config, false
     }
     fmt.Println("Attempting to read config file ", file_path)
     if _, err := toml.DecodeFile(file_path, &instance_config); err != nil {
 	log.Fatal(err)
     }
     fmt.Println("Config file read succesfully")
-    return &instance_config
+    return &instance_config, true
 }
 
 
@@ -37,8 +37,11 @@ func main() {
 
     usr,_ := user.Current()
     dir :=usr.HomeDir
-    instance_config := read_config_file(dir+"/.ircbot.config")
+    instance_config, ok := read_config_file(dir+"/.ircbot.config")
 
+    if !ok {
+	log.Fatal("Config file doesn't exist, fail right now")
+    }
     conn := irc.IRC(instance_config.Bot_name, instance_config.Bot_name)
     conn.Password = instance_config.Password
     err := conn.Connect(instance_config.Server_url)
