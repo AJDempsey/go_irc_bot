@@ -16,12 +16,10 @@ type Config struct {
     Server_url string
 }
 
-/* This code is based on this stackoverflow answer
-http://stackoverflow.com/questions/8757389/reading-file-line-by-line-in-go
-*/
+/* Idea for this code taken from https://blog.gopheracademy.com/advent-2014/reading-config-files-the-go-way/ */
 func read_config_file (file_path string) *Config {
     var instance_config Config
-   
+
     _, err := os.Stat(file_path)
     if err != nil {
 	log.Fatal("Config file doesn't exist")
