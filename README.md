@@ -8,3 +8,8 @@ Room_name = "Example"
 Bot_name = "Tester"
 Password = "pass"
 Server_url = "test.server:6667"
+
+Command line arguments
+
+-config-file <string>
+    A path to a user config file - default is $HOME/ircbot.config

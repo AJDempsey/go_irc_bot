@@ -7,6 +7,7 @@ import (
     "os"
     "os/user"
     "log"
+    "flag"
 )
 
 type Config struct {
@@ -37,7 +38,13 @@ func main() {
 
     usr,_ := user.Current()
     dir :=usr.HomeDir
-    instance_config, ok := read_config_file(dir+"/.ircbot.config")
+
+    config_file := flag.String("config-file", dir+"/.ircbot.config", "Path to a non-default config file")
+
+    flag.Parse()
+
+
+    instance_config, ok := read_config_file(*config_file)
 
     if !ok {
 	log.Fatal("Config file doesn't exist, fail right now")
