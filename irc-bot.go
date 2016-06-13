@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 	"os/user"
+	"regexp"
 )
 
 type Config struct {
@@ -31,6 +32,11 @@ func read_config_file(file_path string) (*Config, bool) {
 	}
 	fmt.Println("Config file read succesfully")
 	return &instance_config, true
+}
+
+func message_is_for_me(e *irc.Event, config *Config) bool {
+	var to_me = regexp.MustCompile(`^` + config.Bot_name + `:.*`)
+	return to_me.MatchString(e.Message())
 }
 
 func main() {
@@ -61,7 +67,9 @@ func main() {
 		conn.Privmsg(instance_config.Room_name, "Hello! I am a Gobot")
 	})
 	conn.AddCallback("PRIVMSG", func(e *irc.Event) {
-		conn.Privmsg(instance_config.Room_name, e.Message())
+		if message_is_for_me(e, instance_config) {
+			conn.Privmsg(instance_config.Room_name, e.Message())
+		}
 	})
 	conn.Loop()
 }
